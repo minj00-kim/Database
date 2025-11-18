@@ -1,18 +1,35 @@
+# listings/urls.py
 from django.urls import path
 from . import views
 
-app_name = 'listings'
+app_name = "listings"
 
 urlpatterns = [
-    path('', views.ListingListView.as_view(), name='listing_list'),
-    path('create/', views.ListingCreateView.as_view(), name='listing_create'),
-    path('<slug:slug>/', views.ListingDetailView.as_view(), name='listing_detail'),
-    path('<slug:slug>/edit/', views.ListingUpdateView.as_view(), name='listing_edit'),
-    path('<slug:slug>/delete/', views.ListingDeleteView.as_view(), name='listing_delete'),
+    # 메인 목록
+    path("", views.listing_list, name="listing_list"),
 
-    path('<slug:slug>/favorite-toggle/', views.favorite_toggle, name='favorite_toggle'),
-    path('<slug:slug>/report/', views.report_view, name='report'),
-    path('<slug:slug>/message/', views.message_create, name='message_create'),
+    # 판매글 CRUD
+    path("listing/new/", views.listing_create, name="listing_create"),
+    path("listing/<int:pk>/", views.listing_detail, name="listing_detail"),
+    path("listing/<int:pk>/edit/", views.listing_update, name="listing_update"),
+    path("listing/<int:pk>/delete/", views.listing_delete, name="listing_delete"),
 
-    path('my-messages/', views.MyMessageListView.as_view(), name='my_messages'),
+    # 찜 토글 + 찜 목록
+    path("listing/<int:pk>/favorite/", views.toggle_favorite, name="toggle_favorite"),
+    path("favorites/", views.favorite_list, name="favorite_list"),
+
+    # 내 상점
+    path("my-store/<int:pk>/", views.my_store, name="my_store"),
+
+    # 신고 (사용자 / 물품)
+    path("report/user/<int:user_pk>/", views.report_user, name="report_user"),
+    path("report/listing/<int:listing_pk>/", views.report_listing, name="report_listing"),
+
+
+# 채팅 기능
+    path("chat/<int:room_id>/", views.chat_room, name="chat_room"),
+    path("chat/start/<int:listing_pk>/", views.start_chat, name="start_chat"),
+
 ]
+
+

@@ -1,0 +1,60 @@
+{% comment %}
+중요: base.html은 listings/templates/listings/base.html 에 위치해야 함
+{% endcomment %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}마켓 플레이스{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-100">
+
+<header class="bg-white shadow-md sticky top-0 z-10">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="{% url 'listings:listing_list' %}" class="text-3xl font-bold text-blue-600">
+            <i class="fas fa-store mr-2"></i>M A R K E T
+        </a>
+
+        <nav class="flex items-center space-x-6">
+
+            <a href="{% url 'listings:listing_create' %}"
+               class="text-blue-600 font-bold hover:underline">
+                물품 등록
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'listings:my_store' pk=user.pk %}"
+                   class="text-gray-700 hover:text-blue-600">
+                    내 상점
+                </a>
+
+                <a href="{% url 'accounts:logout' %}"
+                   class="text-red-500 hover:underline">
+                    로그아웃
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-blue-600">로그인</a>
+                <a href="{% url 'accounts:signup' %}"
+                   class="bg-blue-600 text-white px-3 py-2 rounded-lg ml-2">회원가입</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<main class="flex-grow container mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="bg-gray-800 text-white py-6 text-center text-sm">
+    &copy; 2024 마켓 플레이스
+</footer>
+
+</body>
+</html>

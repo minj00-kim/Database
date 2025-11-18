@@ -1,0 +1,94 @@
+{% extends 'listings/base.html' %}
+{% block title %}{{ listing.title }} - 상세 보기{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-xl">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- 이미지 영역 -->
+        <div>
+            <div class="rounded-xl overflow-hidden shadow-lg">
+                {% with placeholder='https://placehold.co/600x400/e0e0e0/333?text='|add:listing.title|urlencode %}
+                <img src="{{ listing.image_url|default:placeholder }}"
+                     onerror="this.onerror=null;this.src='{{ placeholder }}';"
+                     class="w-full object-cover">
+                {% endwith %}
+            </div>
+
+            <!-- 판매 상태 뱃지 -->
+            {% if listing.status == 'R' %}
+                <span class="inline-block mt-4 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow">예약중</span>
+            {% elif listing.status == 'D' %}
+                <span class="inline-block mt-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow">판매완료</span>
+            {% else %}
+                <span class="inline-block mt-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow">판매중</span>
+            {% endif %}
+        </div>
+
+        <!-- 상세 정보 영역 -->
+        <div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ listing.title }}</h1>
+
+            <p class="text-3xl font-extrabold text-blue-600 mb-6">
+                {{ listing.price|floatformat:"0" }} 원
+            </p>
+
+            <p class="flex items-center mb-3">
+                <i class="fas fa-map-marker-alt text-blue-500 mr-3"></i>
+                <span>{{ listing.location|default:"지역 미정" }}</span>
+            </p>
+
+            <!-- 카테고리 -->
+            <p class="mb-4">
+                {% for cat in listing.category.all %}
+                    <span class="inline-block bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full mr-2">
+                        {{ cat.name }}
+                    </span>
+                {% empty %}
+                    <span class="text-gray-400">카테고리 없음</span>
+                {% endfor %}
+            </p>
+
+            <!-- 버튼 영역 -->
+            <div class="flex gap-4 mt-8">
+
+                <!-- 찜하기 (로그인 안 되어 있어도 눌렀을 때 로그인 페이지로 튕김) -->
+                <a href="{% url 'listings:toggle_favorite' pk=listing.pk %}"
+                   class="flex-1 bg-pink-500 text-white px-5 py-3 rounded-xl text-center font-bold hover:bg-pink-600 transition">
+                    <i class="fas fa-heart mr-2"></i> 찜하기
+                </a>
+
+                <!-- 채팅 시작 (로그인 & 내 물건이 아닐 때만) -->
+                {% if user.is_authenticated and listing.seller != user %}
+                    <a href="{% url 'listings:start_chat' listing.pk %}"
+                       class="flex-1 bg-green-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-600 transition shadow-md">
+                        <i class="fas fa-comment-dots mr-2"></i> 채팅으로 거래하기
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- 판매자 본인일 때만 수정/삭제 가능 -->
+            {% if user == listing.seller %}
+            <div class="flex gap-4 mt-4">
+                <a href="{% url 'listings:listing_edit' listing.pk %}"
+                   class="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-600">
+                    수정
+                </a>
+                <a href="{% url 'listings:listing_delete' listing.pk %}"
+                   class="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg text-center hover:bg-red-600">
+                    삭제
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 상세 설명 -->
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold mb-4">상세 설명</h2>
+        <p class="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">{{ listing.description }}</p>
+    </div>
+
+</div>
+{% endblock %}

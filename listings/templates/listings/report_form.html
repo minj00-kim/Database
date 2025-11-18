@@ -1,0 +1,25 @@
+{% extends 'listings/base.html' %}
+{% block title %}신고하기{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-xl">
+
+    <h1 class="text-3xl font-bold mb-6">신고하기</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="mb-6">
+                <label class="block font-semibold mb-2">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button class="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700">
+            신고 제출
+        </button>
+    </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'listings/base.html' %}
+{% block title %}{{ seller_user.username }}님의 상점{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <h1 class="text-4xl font-bold mb-6">
+        <i class="fas fa-store text-blue-500 mr-2"></i>
+        {{ seller_user.username }}님의 상점
+    </h1>
+
+    {% if listings %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for listing in listings %}
+        <a href="{% url 'listings:listing_detail' listing.pk %}"
+           class="block bg-white p-4 rounded-xl shadow hover:shadow-xl transition">
+
+            {% with placeholder='https://placehold.co/300x200/e0e0e0/333?text='|add:listing.title|urlencode %}
+            <img src="{{ listing.image_url|default:placeholder }}"
+                 class="w-full h-48 object-cover rounded-lg mb-3"
+                 onerror="this.onerror=null;this.src='{{ placeholder }}';">
+            {% endwith %}
+
+            <h2 class="text-xl font-bold">{{ listing.title }}</h2>
+            <p class="text-blue-600 font-bold text-2xl">{{ listing.price }} 원</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 py-16">등록된 물품이 없습니다.</p>
+    {% endif %}
+</div>
+{% endblock %}
