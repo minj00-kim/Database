@@ -3,75 +3,68 @@
 {% block title %}내 찜 목록{% endblock %}
 
 {% block content %}
-<h1 class="text-4xl font-extrabold text-gray-800 mb-8">
-    <i class="fas fa-heart text-pink-500 mr-2"></i> {{ user.username }}님의 찜 목록
+<h1 class="text-xl font-semibold text-gray-900 mb-6">
+    {{ user.username }}님의 찜 목록
 </h1>
 
 {% if favorites %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {% for fav in favorites %}
             {% with listing=fav.listing %}
-            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex">
-
-                <!-- 이미지 -->
-                <a href="{% url 'listings:listing_detail' pk=listing.pk %}" class="w-1/3">
+            <div class="bg-white border border-gray-200 rounded-xl flex overflow-hidden">
+                <a href="{% url 'listings:listing_detail' pk=listing.pk %}" class="w-32 h-32 flex-shrink-0">
                     <img src="{{ listing.image_url|default:'https://placehold.co/150x150?text=No+Image' }}"
                          class="w-full h-full object-cover">
                 </a>
 
-                <!-- 내용 -->
-                <div class="p-4 w-2/3 flex flex-col justify-between relative">
-
+                <div class="p-3 flex flex-col justify-between flex-1 relative text-sm">
                     {% if listing.status == 'R' %}
-                        <span class="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-3 py-1 rounded-full">예약중</span>
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                            예약중
+                        </span>
                     {% elif listing.status == 'D' %}
-                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-3 py-1 rounded-full">판매완료</span>
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">
+                            판매완료
+                        </span>
                     {% else %}
-                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-3 py-1 rounded-full">판매중</span>
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                            판매중
+                        </span>
                     {% endif %}
 
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-1 truncate">
-                            <a href="{% url 'listings:listing_detail' pk=listing.pk %}">
-                                {{ listing.title }}
-                            </a>
-                        </h2>
-
-                        <p class="text-2xl font-extrabold text-blue-600 mb-3">
+                        <a href="{% url 'listings:listing_detail' pk=listing.pk %}"
+                           class="text-sm font-semibold text-gray-900 line-clamp-1">
+                            {{ listing.title }}
+                        </a>
+                        <p class="mt-1 text-lg font-semibold text-emerald-700">
                             {{ listing.price|floatformat:"0" }} 원
                         </p>
                     </div>
 
-                    <div class="text-sm text-gray-500">
-                        <p class="flex items-center mb-1">
-                            <i class="fas fa-map-marker-alt mr-2"></i> {{ listing.location|default:"지역 미정" }}
-                        </p>
-                        <p class="flex items-center">
-                            <i class="fas fa-user-circle mr-2"></i>
+                    <div class="text-xs text-gray-500 space-y-0.5">
+                        <p>{{ listing.location|default:"지역 미정" }}</p>
+                        <p>
                             판매자:
-                            <a href="{% url 'listings:my_store' pk=listing.seller.pk %}" class="hover:text-gray-700 ml-1">
+                            <a href="{% url 'listings:my_store' pk=listing.seller.pk %}" class="underline-offset-2 hover:underline">
                                 {{ listing.seller.username }}
                             </a>
                         </p>
-                        <p class="mt-2 text-xs text-gray-400">
-                             찜한 날짜: {{ fav.created_at|date:"Y-m-d" }}
-                        </p>
+                        <p>찜한 날짜: {{ fav.created_at|date:"Y-m-d" }}</p>
                     </div>
-
                 </div>
             </div>
             {% endwith %}
         {% endfor %}
     </div>
 {% else %}
-
-    <div class="text-center py-16 bg-white rounded-xl shadow-lg">
-        <i class="fas fa-heart-broken text-6xl text-pink-300 mb-4"></i>
-        <p class="text-2xl font-semibold text-gray-600">아직 찜한 물품이 없습니다.</p>
-        <a href="{% url 'listings:listing_list' %}" class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700">
+    <div class="bg-white border border-dashed border-gray-300 rounded-xl py-16 text-center">
+        <p class="text-base font-medium text-gray-600 mb-2">아직 찜한 물품이 없습니다.</p>
+        <p class="text-xs text-gray-400 mb-4">관심 있는 물품을 찜해두면 나중에 쉽게 다시 볼 수 있어요.</p>
+        <a href="{% url 'listings:listing_list' %}"
+           class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm bg-emerald-500 text-white hover:bg-emerald-600">
             물품 둘러보기
         </a>
     </div>
-
 {% endif %}
 {% endblock %}

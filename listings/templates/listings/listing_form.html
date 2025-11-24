@@ -2,26 +2,26 @@
 {% block title %}물품 {% if form.instance.pk %}수정{% else %}등록{% endif %}{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-xl">
+<div class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-xl p-6">
 
-    <h1 class="text-3xl font-bold mb-6">
+    <h1 class="text-lg font-semibold mb-4">
         {% if form.instance.pk %}물품 수정{% else %}새 물품 등록{% endif %}
     </h1>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
 
         {% for field in form %}
-            <div class="mb-6">
-                <label class="block font-semibold mb-2">{{ field.label }}</label>
+            <div class="text-sm">
+                <label class="block font-medium mb-1">{{ field.label }}</label>
                 {{ field }}
                 {% for error in field.errors %}
-                    <p class="text-red-500 text-sm">{{ error }}</p>
+                    <p class="text-xs text-red-500 mt-1">{{ error }}</p>
                 {% endfor %}
             </div>
         {% endfor %}
 
-        <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">
+        <button class="w-full bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-emerald-600">
             저장하기
         </button>
     </form>

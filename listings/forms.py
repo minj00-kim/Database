@@ -12,44 +12,49 @@ class ListingForm(forms.ModelForm):
             "category",
             "status",
             "location",
-            "image_url",
+            "image1",
+            "image2",
+            "image3",
             "description",
         ]
         widgets = {
             "title": forms.TextInput(
                 attrs={
-                    "class": "w-full p-3 border border-gray-300 rounded-lg",
+                    "class": "w-full p-3 border border-gray-300 rounded-lg text-sm",
                     "placeholder": "제목을 입력하세요",
                 }
             ),
             "price": forms.NumberInput(
                 attrs={
-                    "class": "w-full p-3 border border-gray-300 rounded-lg",
+                    "class": "w-full p-3 border border-gray-300 rounded-lg text-sm",
                     "placeholder": "가격(원)",
                     "min": "0",
                 }
             ),
-            "category": forms.CheckboxSelectMultiple(
+            "category": forms.Select(
                 attrs={
-                    "class": "mr-2",
+                    "class": "w-full p-3 border border-gray-300 rounded-lg text-sm",
                 }
             ),
             "status": forms.RadioSelect(),
             "location": forms.TextInput(
                 attrs={
-                    "class": "w-full p-3 border border-gray-300 rounded-lg",
+                    "class": "w-full p-3 border border-gray-300 rounded-lg text-sm",
                     "placeholder": "예: 서울 강남구 역삼동",
                 }
             ),
-            "image_url": forms.URLInput(
-                attrs={
-                    "class": "w-full p-3 border border-gray-300 rounded-lg",
-                    "placeholder": "이미지 URL (선택)",
-                }
+            "image1": forms.ClearableFileInput(
+                attrs={"class": "w-full text-sm"}
+            ),
+            "image2": forms.ClearableFileInput(
+                attrs={"class": "w-full text-sm"}
+            ),
+            "image3": forms.ClearableFileInput(
+                attrs={"class": "w-full text-sm"}
             ),
             "description": forms.Textarea(
                 attrs={
-                    "class": "w-full p-3 border border-gray-300 rounded-lg",
+                    "class": "w-full p-3 border border-gray-300 rounded-lg text-sm",
                     "rows": 6,
                     "placeholder": "상품 상세 설명을 입력하세요.",
                 }

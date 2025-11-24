@@ -1,52 +1,70 @@
 {% extends 'listings/base.html' %}
 
-{% block title %}채팅방{% endblock %}
+{% block title %}내 찜 목록{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+<h1 class="text-xl font-semibold text-gray-900 mb-6">
+    {{ user.username }}님의 찜 목록
+</h1>
 
-    <h2 class="text-2xl font-bold mb-4">
-        💬 {{ listing.title }} - 채팅방
-    </h2>
+{% if favorites %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% for fav in favorites %}
+            {% with listing=fav.listing %}
+            <div class="bg-white border border-gray-200 rounded-xl flex overflow-hidden">
+                <a href="{% url 'listings:listing_detail' pk=listing.pk %}" class="w-32 h-32 flex-shrink-0">
+                    <img src="{{ listing.image_url|default:'https://placehold.co/150x150?text=No+Image' }}"
+                         class="w-full h-full object-cover">
+                </a>
 
-    <div class="p-4 border rounded-lg h-80 overflow-y-auto bg-gray-50">
-        {% for msg in messages_list %}
-            <div class="mb-4">
-                <p class="text-sm text-gray-500">{{ msg.created_at|date:"Y-m-d H:i" }}</p>
-                <p class="font-semibold {% if msg.sender == user %}text-blue-600{% else %}text-gray-700{% endif %}">
-                    {{ msg.sender.username }}
-                </p>
-                <p>{{ msg.message }}</p>
+                <div class="p-3 flex flex-col justify-between flex-1 relative text-sm">
+                    {% if listing.status == 'R' %}
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                            예약중
+                        </span>
+                    {% elif listing.status == 'D' %}
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">
+                            판매완료
+                        </span>
+                    {% else %}
+                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                            판매중
+                        </span>
+                    {% endif %}
+
+                    <div>
+                        <a href="{% url 'listings:listing_detail' pk=listing.pk %}"
+                           class="text-sm font-semibold text-gray-900 line-clamp-1">
+                            {{ listing.title }}
+                        </a>
+                        <p class="mt-1 text-lg font-semibold text-emerald-700">
+                            {{ listing.price|floatformat:"0" }} 원
+                        </p>
+                    </div>
+
+                    <div class="text-xs text-gray-500 space-y-0.5">
+                        <p>{{ listing.location|default:"지역 미정" }}</p>
+                        <p>
+                            판매자:
+                            <a href="{% url 'listings:my_store' pk=listing.seller.pk %}" class="underline-offset-2 hover:underline">
+                                {{ listing.seller.username }}
+                            </a>
+                        </p>
+                        <p>찜한 날짜: {{ fav.created_at|date:"Y-m-d" }}</p>
+                    </div>
+                </div>
             </div>
-        {% empty %}
-            <p class="text-gray-500">아직 메시지가 없습니다.</p>
+            {% endwith %}
         {% endfor %}
     </div>
-
-    <form method="post" class="mt-4">
-        {% csrf_token %}
-        {{ form }}
-        <button class="w-full bg-blue-600 text-white py-2 rounded-lg mt-2 hover:bg-blue-700">
-            메시지 보내기
-        </button>
-
-        {% if user == listing.seller %}
-        <div class="mt-4">
-            <label class="font-semibold">판매 상태 변경</label>
-            <select name="status" class="w-full border px-2 py-2 mt-1 rounded-lg">
-                <option value="">-- 변경 안 함 --</option>
-                {% for value, label in STATUS_CHOICES %}
-                    <option value="{{ value }}" {% if listing.status == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button class="w-full bg-green-600 text-white py-2 rounded-lg mt-2 hover:bg-green-700">
-                상태 업데이트
-            </button>
-        </div>
-        {% endif %}
-    </form>
-
-</div>
+{% else %}
+    <div class="bg-white border border-dashed border-gray-300 rounded-xl py-16 text-center">
+        <p class="text-base font-medium text-gray-600 mb-2">아직 찜한 물품이 없습니다.</p>
+        <p class="text-xs text-gray-400 mb-4">관심 있는 물품을 찜해두면 나중에 쉽게 다시 볼 수 있어요.</p>
+        <a href="{% url 'listings:listing_list' %}"
+           class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm bg-emerald-500 text-white hover:bg-emerald-600">
+            물품 둘러보기
+        </a>
+    </div>
+{% endif %}
 {% endblock %}
