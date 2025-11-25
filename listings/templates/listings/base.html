@@ -1,8 +1,6 @@
 {% comment %}
-기본 레이아웃 템플릿
-경로: listings/templates/listings/base.html
+전체 레이아웃 공통 템플릿
 {% endcomment %}
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,58 +9,79 @@
     <title>{% block title %}마켓 플레이스{% endblock %}</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+    <style>
+        /* 🔹 모든 입력 필드 공통 스타일 (일정 크기 + 반투명) */
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="number"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;    /* gray-300 */
+            background-color: rgba(255, 255, 255, 0.7); /* 반투명 흰색 */
+            font-size: 0.875rem;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col bg-gray-50">
 
-<header class="bg-white shadow-sm sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+<body class="min-h-screen flex flex-col bg-gray-100">
 
-        <!-- 👇 동그란 M 없이, 심플한 텍스트 로고 -->
-        <a href="{% url 'listings:listing_list' %}"
-           class="flex items-center gap-2 text-2xl font-bold text-emerald-600">
-            <i class="fas fa-store"></i>
-            <span>Market</span>
+<header class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+
+        <!-- 로고 (M 아이콘 제거, 심플 텍스트) -->
+        <a href="{% url 'listings:listing_list' %}" class="text-2xl font-bold text-emerald-700">
+            MARKET
         </a>
 
-<nav class="flex items-center gap-5 text-sm">
+        <nav class="flex items-center space-x-5 text-sm">
 
-    {% if user.is_authenticated %}
-        <a href="{% url 'listings:listing_create' %}"
-           class="px-3 py-1.5 rounded-full border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-medium">
-            물품 등록
-        </a>
+            {% if user.is_authenticated %}
+                <!-- 로그인 시에만 물품 등록 보이게 -->
+                <a href="{% url 'listings:listing_create' %}"
+                   class="px-3 py-1.5 rounded-full border border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-medium">
+                    물품 등록
+                </a>
 
-        <a href="{% url 'listings:favorite_list' %}"
-           class="text-gray-600 hover:text-gray-900">
-            찜 목록
-        </a>
+                <a href="{% url 'listings:favorite_list' %}"
+                   class="text-gray-700 hover:text-emerald-600">
+                    찜 목록
+                </a>
 
-        <a href="{% url 'listings:chat_list' %}"
-           class="text-gray-600 hover:text-gray-900">
-            채팅함
-        </a>
+                <a href="{% url 'listings:chat_list' %}"
+                   class="text-gray-700 hover:text-emerald-600">
+                    채팅함
+                </a>
 
-        <a href="{% url 'listings:my_store' pk=user.pk %}"
-           class="text-gray-600 hover:text-gray-900">
-            내 상점
-        </a>
+                <a href="{% url 'listings:my_store' pk=user.pk %}"
+                   class="text-gray-700 hover:text-emerald-600">
+                    내 상점
+                </a>
 
-        <a href="{% url 'accounts:logout' %}"
-           class="text-gray-400 hover:text-gray-700 text-sm">
-            로그아웃
-        </a>
+                <a href="{% url 'accounts:logout' %}" class="text-gray-400 hover:text-gray-700">
+                    로그아웃
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-emerald-600">
+                    로그인
+                </a>
+                <a href="{% url 'accounts:signup' %}"
+                   class="bg-emerald-600 text-white px-3 py-1.5 rounded-full hover:bg-emerald-700 text-sm">
+                    회원가입
+                </a>
+            {% endif %}
 
-    {% else %}
-        <a href="{% url 'accounts:login' %}" class="text-gray-600 hover:text-gray-900">로그인</a>
-        <a href="{% url 'accounts:signup' %}"
-           class="px-3 py-1.5 rounded-full bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600">
-            회원가입
-        </a>
-    {% endif %}
-</nav>
-
+        </nav>
     </div>
 </header>
 
@@ -71,7 +90,7 @@
 </main>
 
 <footer class="bg-gray-900 text-white py-4 text-center text-xs">
-    &copy; 2025.2학기 데이터베이스 프로젝트
+    &copy; 2025 데이터베이스 중고거래플랫폼
 </footer>
 
 </body>

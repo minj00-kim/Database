@@ -11,10 +11,8 @@
             <div class="rounded-lg overflow-hidden bg-gray-100 h-72 flex items-center justify-center">
                 {% if listing.image1 %}
                     <img src="{{ listing.image1.url }}" class="w-full h-full object-cover">
-                {% elif listing.image2 %}
-                    <img src="{{ listing.image2.url }}" class="w-full h-full object-cover">
-                {% elif listing.image3 %}
-                    <img src="{{ listing.image3.url }}" class="w-full h-full object-cover">
+                {% elif listing.image_url %}
+                    <img src="{{ listing.image_url }}" class="w-full h-full object-cover">
                 {% else %}
                     <span class="text-sm text-gray-400">
                         등록된 이미지가 없습니다.
@@ -40,19 +38,15 @@
             </div>
         </div>
 
-        <!-- 상세 정보 영역 -->
+        <!-- 상세 정보 -->
         <div class="flex flex-col justify-between">
             <div>
                 <h1 class="text-2xl font-semibold text-gray-900 mb-2">
                     {{ listing.title }}
                 </h1>
 
-                <p class="text-xl font-bold text-emerald-700 mb-4">
+                <p class="text-xl font-bold text-emerald-700 mb-3">
                     {{ listing.price|floatformat:"0" }} 원
-                </p>
-
-                <p class="text-sm text-gray-600 mb-1">
-                    카테고리: {{ listing.get_category_display }}
                 </p>
 
                 <p class="text-sm text-gray-600 mb-1">
@@ -67,7 +61,7 @@
                     </a>
                 </p>
 
-                <!-- 신고 링크들 -->
+                <!-- 신고 -->
                 <div class="mt-3 flex items-center gap-2 text-xs">
                     <a href="{% url 'listings:report_listing' listing_pk=listing.pk %}"
                        class="px-2 py-1 rounded-full border border-red-200 text-red-500 hover:bg-red-50">
@@ -90,7 +84,7 @@
             <!-- 버튼 영역 -->
             <div class="mt-6 space-y-3">
 
-                <!-- 내가 올린 글이 아닐 때만 찜 버튼 -->
+                <!-- 내 글이 아닐 때만 찜 -->
                 {% if user != listing.seller %}
                     <a href="{% url 'listings:toggle_favorite' pk=listing.pk %}"
                        class="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 text-sm hover:bg-gray-50">
@@ -116,7 +110,7 @@
                     </a>
                 {% endif %}
 
-                <!-- 판매자 본인일 때 수정/삭제 -->
+                <!-- 판매자 본인용 수정/삭제 -->
                 {% if user == listing.seller %}
                     <div class="flex gap-2">
                         <a href="{% url 'listings:listing_update' listing.pk %}"
@@ -140,6 +134,5 @@
             {{ listing.description }}
         </p>
     </div>
-
 </div>
 {% endblock %}

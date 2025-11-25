@@ -1,27 +1,30 @@
 {% extends 'listings/base.html' %}
-{% block title %}물품 {% if form.instance.pk %}수정{% else %}등록{% endif %}{% endblock %}
+{% block title %}{{ form.instance.pk|yesno:"물품 수정,새 물품 등록" }}{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-xl p-6">
+<div class="max-w-3xl mx-auto bg-white/80 backdrop-blur p-8 rounded-xl shadow">
 
-    <h1 class="text-lg font-semibold mb-4">
+    <h1 class="text-2xl font-bold mb-6">
         {% if form.instance.pk %}물품 수정{% else %}새 물품 등록{% endif %}
     </h1>
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
         {% csrf_token %}
 
         {% for field in form %}
-            <div class="text-sm">
-                <label class="block font-medium mb-1">{{ field.label }}</label>
+            <div>
+                <label class="block font-semibold mb-2 text-sm">{{ field.label }}</label>
                 {{ field }}
+                {% if field.help_text %}
+                    <p class="text-xs text-gray-400">{{ field.help_text }}</p>
+                {% endif %}
                 {% for error in field.errors %}
-                    <p class="text-xs text-red-500 mt-1">{{ error }}</p>
+                    <p class="text-xs text-red-500">{{ error }}</p>
                 {% endfor %}
             </div>
         {% endfor %}
 
-        <button class="w-full bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-emerald-600">
+        <button class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700">
             저장하기
         </button>
     </form>

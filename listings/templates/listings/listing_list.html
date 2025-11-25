@@ -1,43 +1,42 @@
 {% extends 'listings/base.html' %}
-{% block title %}물품 목록 - 마켓 플레이스{% endblock %}
+{% block title %}물품 목록{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-semibold text-gray-900 mb-6">중고 물품 둘러보기</h1>
+<h1 class="text-2xl font-bold text-gray-900 mb-6">중고 물품 둘러보기</h1>
 
 {% if listings %}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     {% for listing in listings %}
     <div class="relative bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100">
 
-        {# 🔹 내 글이면 점 3개 메뉴 노출 #}
+        {# 내 글일 때만 점 3개 메뉴 #}
         {% if user.is_authenticated and user == listing.seller %}
-            <div class="absolute top-2 right-2 z-10">
-                <details class="relative">
-                    <summary class="list-none cursor-pointer p-1 rounded-full hover:bg-gray-100">
-                        <i class="fas fa-ellipsis-v text-gray-500 text-sm"></i>
-                    </summary>
-                    <div class="absolute right-0 mt-1 w-28 bg-white border border-gray-200 rounded-lg shadow text-xs">
-                        <a href="{% url 'listings:listing_update' listing.pk %}"
-                           class="block px-3 py-2 hover:bg-gray-50">
-                            수정
-                        </a>
-                        <a href="{% url 'listings:listing_delete' listing.pk %}"
-                           class="block px-3 py-2 text-red-500 hover:bg-red-50">
-                            삭제
-                        </a>
-                    </div>
-                </details>
-            </div>
+        <div class="absolute top-2 right-2 z-10">
+            <details class="relative">
+                <summary class="list-none cursor-pointer p-1 rounded-full hover:bg-gray-100">
+                    <i class="fas fa-ellipsis-v text-gray-500 text-sm"></i>
+                </summary>
+                <div class="absolute right-0 mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow text-xs">
+                    <a href="{% url 'listings:listing_update' listing.pk %}"
+                       class="block px-3 py-2 hover:bg-gray-50">
+                        수정
+                    </a>
+                    <a href="{% url 'listings:listing_delete' listing.pk %}"
+                       class="block px-3 py-2 text-red-500 hover:bg-red-50">
+                        삭제
+                    </a>
+                </div>
+            </details>
+        </div>
         {% endif %}
 
-        <a href="{% url 'listings:listing_detail' listing.pk %}"
-           class="block">
+        <a href="{% url 'listings:listing_detail' listing.pk %}" class="block">
 
-            {# 🔹 첫 번째 이미지(image1)가 있으면 그걸 썸네일로 사용 #}
             <div class="w-full h-48 bg-gray-100 overflow-hidden">
                 {% if listing.image1 %}
-                    <img src="{{ listing.image1.url }}"
-                         class="w-full h-full object-cover">
+                    <img src="{{ listing.image1.url }}" class="w-full h-full object-cover">
+                {% elif listing.image_url %}
+                    <img src="{{ listing.image_url }}" class="w-full h-full object-cover">
                 {% else %}
                     <img src="https://placehold.co/400x300/e5e7eb/6b7280?text={{ listing.title|urlencode }}"
                          class="w-full h-full object-cover">
@@ -50,17 +49,16 @@
                         {{ listing.title }}
                     </h2>
 
-                    {# 상태 뱃지 #}
                     {% if listing.status == 'R' %}
-                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-yellow-100 text-yellow-700 whitespace-nowrap">
+                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-yellow-100 text-yellow-700">
                             예약중
                         </span>
                     {% elif listing.status == 'D' %}
-                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-red-100 text-red-600 whitespace-nowrap">
+                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-red-100 text-red-600">
                             거래완료
                         </span>
                     {% else %}
-                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-emerald-100 text-emerald-700 whitespace-nowrap">
+                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-emerald-100 text-emerald-700">
                             판매중
                         </span>
                     {% endif %}

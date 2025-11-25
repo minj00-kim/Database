@@ -2,45 +2,23 @@
 {% block title %}로그인{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white border border-gray-200 rounded-xl p-6">
+<div class="max-w-md mx-auto bg-white/80 backdrop-blur p-8 rounded-xl shadow">
 
-    <h1 class="text-lg font-semibold mb-1 text-gray-900 text-center">
-        로그인
-    </h1>
-    <p class="text-xs text-gray-500 mb-5 text-center">
-        마켓 서비스를 이용하려면 로그인이 필요해요.
-    </p>
+    <h1 class="text-2xl font-bold mb-6 text-center text-gray-900">로그인</h1>
 
-    <form method="POST" class="space-y-3 text-sm">
+    <form method="POST" class="space-y-4">
         {% csrf_token %}
 
-        {{ form.non_field_errors }}
+        {{ form.as_p }}
 
-        {% for field in form %}
-            <div>
-                <label class="block mb-1 font-medium text-gray-800">
-                    {{ field.label }}
-                </label>
-                {{ field }}
-                {% for error in field.errors %}
-                    <p class="mt-1 text-[11px] text-red-500">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        <button
-            class="w-full mt-2 bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-emerald-600">
+        <button class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 mt-2">
             로그인
         </button>
     </form>
 
-    <p class="text-xs text-gray-500 text-center mt-4">
-        아직 계정이 없나요?
-        <a href="{% url 'accounts:signup' %}" class="text-emerald-700 hover:text-emerald-800 underline-offset-2 hover:underline">
-            회원가입
-        </a>
+    <p class="text-center mt-4 text-sm text-gray-500">
+        계정이 없나요?
+        <a href="{% url 'accounts:signup' %}" class="text-emerald-600 font-semibold">회원가입</a>
     </p>
 
 </div>
