@@ -1,0 +1,80 @@
+{% extends 'listings/base.html' %}
+{% block title %}채팅함{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <h1 class="text-xl font-semibold text-gray-900 mb-6">
+        채팅 목록
+    </h1>
+
+    {% if rooms %}
+        <div class="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
+            {% for room in rooms %}
+                <a href="{% url 'listings:chat_room' room.id %}"
+                   class="flex items-center px-4 py-3 hover:bg-gray-50">
+
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900 flex items-center gap-2">
+                            {{ room.listing.title }}
+
+                            {% if room.listing.status == 'S' %}
+                                <span class="px-2 py-0.5 text-[11px] rounded-full bg-emerald-50 text-emerald-700">
+                                    판매중
+                                </span>
+                            {% elif room.listing.status == 'R' %}
+                                <span class="px-2 py-0.5 text-[11px] rounded-full bg-yellow-50 text-yellow-700">
+                                    예약중
+                                </span>
+                            {% elif room.listing.status == 'D' %}
+                                <span class="px-2 py-0.5 text-[11px] rounded-full bg-red-50 text-red-600">
+                                    거래완료
+                                </span>
+                            {% endif %}
+                        </p>
+
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            상대방:
+                            {% if room.buyer == user %}
+                                {{ room.seller.username }}
+                            {% else %}
+                                {{ room.buyer.username }}
+                            {% endif %}
+                        </p>
+
+                        {% if room.messages.last %}
+                            <p class="text-xs text-gray-400 mt-0.5 truncate">
+                                마지막 메시지: {{ room.messages.last.message }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-right ml-4">
+                        <p class="text-[11px] text-gray-400">
+                            {{ room.created_at|date:"Y-m-d H:i" }}
+                        </p>
+                        <span class="inline-flex items-center justify-center mt-1 px-2 py-0.5 rounded-full text-[11px] bg-emerald-50 text-emerald-700">
+                            채팅 보기
+                        </span>
+                    </div>
+
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white border border-dashed border-gray-300 rounded-xl py-16 text-center">
+            <p class="text-sm font-medium text-gray-700 mb-2">
+                아직 채팅이 없습니다.
+            </p>
+            <p class="text-xs text-gray-400 mb-4">
+                물품을 찜하거나 채팅으로 거래를 시작해 보세요.
+            </p>
+            <a href="{% url 'listings:listing_list' %}"
+               class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-emerald-500 text-white text-sm hover:bg-emerald-600">
+                물품 둘러보기
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

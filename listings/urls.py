@@ -25,6 +25,8 @@ urlpatterns = [
     path("report/user/<int:user_pk>/", views.report_user, name="report_user"),
     path("report/listing/<int:listing_pk>/", views.report_listing, name="report_listing"),
 
+    path("chats/", views.chat_list, name="chat_list"),
+
     # 채팅 기능
     path("chat/<int:room_id>/", views.chat_room, name="chat_room"),
     path("chat/start/<int:listing_pk>/", views.start_chat, name="start_chat"),

@@ -6,13 +6,16 @@ from . import views
 app_name = "accounts"
 
 urlpatterns = [
-    path("login/", auth_views.LoginView.as_view(
-        template_name="accounts/login.html"
-    ), name="login"),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(
+            template_name="accounts/login.html"
+        ),
+        name="login",
+    ),
 
-    path("logout/", auth_views.LogoutView.as_view(
-        next_page="listings:listing_list"
-    ), name="logout"),
+    # ✅ 커스텀 로그아웃 뷰 사용
+    path("logout/", views.logout_view, name="logout"),
 
     path("signup/", views.signup, name="signup"),
 ]

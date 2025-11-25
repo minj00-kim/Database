@@ -1,70 +1,80 @@
 {% extends 'listings/base.html' %}
-
-{% block title %}내 찜 목록{% endblock %}
+{% block title %}채팅방{% endblock %}
 
 {% block content %}
-<h1 class="text-xl font-semibold text-gray-900 mb-6">
-    {{ user.username }}님의 찜 목록
-</h1>
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-6">
 
-{% if favorites %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {% for fav in favorites %}
-            {% with listing=fav.listing %}
-            <div class="bg-white border border-gray-200 rounded-xl flex overflow-hidden">
-                <a href="{% url 'listings:listing_detail' pk=listing.pk %}" class="w-32 h-32 flex-shrink-0">
-                    <img src="{{ listing.image_url|default:'https://placehold.co/150x150?text=No+Image' }}"
-                         class="w-full h-full object-cover">
-                </a>
+    <h2 class="text-lg font-semibold mb-1">
+        💬 {{ listing.title }} - 채팅방
+    </h2>
 
-                <div class="p-3 flex flex-col justify-between flex-1 relative text-sm">
-                    {% if listing.status == 'R' %}
-                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                            예약중
-                        </span>
-                    {% elif listing.status == 'D' %}
-                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">
-                            판매완료
-                        </span>
-                    {% else %}
-                        <span class="absolute top-2 right-2 text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-                            판매중
-                        </span>
-                    {% endif %}
+    <p class="text-xs text-gray-600 mb-4">
+        현재 판매 상태:
+        {% if listing.status == 'S' %}
+            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
+                판매중
+            </span>
+        {% elif listing.status == 'R' %}
+            <span class="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 text-[11px]">
+                예약중
+            </span>
+        {% elif listing.status == 'D' %}
+            <span class="px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[11px]">
+                거래완료
+            </span>
+        {% endif %}
+    </p>
 
-                    <div>
-                        <a href="{% url 'listings:listing_detail' pk=listing.pk %}"
-                           class="text-sm font-semibold text-gray-900 line-clamp-1">
-                            {{ listing.title }}
-                        </a>
-                        <p class="mt-1 text-lg font-semibold text-emerald-700">
-                            {{ listing.price|floatformat:"0" }} 원
-                        </p>
-                    </div>
-
-                    <div class="text-xs text-gray-500 space-y-0.5">
-                        <p>{{ listing.location|default:"지역 미정" }}</p>
-                        <p>
-                            판매자:
-                            <a href="{% url 'listings:my_store' pk=listing.seller.pk %}" class="underline-offset-2 hover:underline">
-                                {{ listing.seller.username }}
-                            </a>
-                        </p>
-                        <p>찜한 날짜: {{ fav.created_at|date:"Y-m-d" }}</p>
-                    </div>
-                </div>
+    <!-- 메시지 리스트 -->
+    <div class="p-3 border border-gray-200 rounded-lg h-72 overflow-y-auto bg-gray-50 text-sm mb-4">
+        {% for msg in messages_list %}
+            <div class="mb-3">
+                <p class="text-[11px] text-gray-400">{{ msg.created_at|date:"Y-m-d H:i" }}</p>
+                <p class="font-semibold {% if msg.sender == user %}text-emerald-700{% else %}text-gray-700{% endif %}">
+                    {{ msg.sender.username }}
+                </p>
+                <p class="text-gray-800">{{ msg.message }}</p>
             </div>
-            {% endwith %}
+        {% empty %}
+            <p class="text-gray-400 text-sm">아직 메시지가 없습니다.</p>
         {% endfor %}
     </div>
-{% else %}
-    <div class="bg-white border border-dashed border-gray-300 rounded-xl py-16 text-center">
-        <p class="text-base font-medium text-gray-600 mb-2">아직 찜한 물품이 없습니다.</p>
-        <p class="text-xs text-gray-400 mb-4">관심 있는 물품을 찜해두면 나중에 쉽게 다시 볼 수 있어요.</p>
-        <a href="{% url 'listings:listing_list' %}"
-           class="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm bg-emerald-500 text-white hover:bg-emerald-600">
-            물품 둘러보기
-        </a>
-    </div>
-{% endif %}
+
+    <!-- 1. 메시지 보내기 폼 -->
+    <form method="post" class="space-y-2 text-sm mb-6">
+        {% csrf_token %}
+        {{ form }}
+
+        <button type="submit"
+                name="send_message"
+                class="w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600">
+            메시지 보내기
+        </button>
+    </form>
+
+    <!-- 2. 판매 상태 변경 폼 (판매자만) -->
+    {% if user == listing.seller %}
+        <form method="post" class="pt-3 border-t border-gray-100 space-y-2 text-sm">
+            {% csrf_token %}
+            <input type="hidden" name="update_status" value="1">
+
+            <label class="block mb-1 font-medium text-gray-800">판매 상태 변경</label>
+            <select name="status"
+                    class="w-full border border-gray-300 px-2 py-2 rounded-lg text-sm">
+                <option value="">-- 변경 안 함 --</option>
+                {% for value, label in STATUS_CHOICES %}
+                    <option value="{{ value }}" {% if listing.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit"
+                    class="w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-black">
+                상태 업데이트
+            </button>
+        </form>
+    {% endif %}
+
+</div>
 {% endblock %}
